@@ -11,15 +11,20 @@ output:
     toc_depth: 2
     number_sections: false
     fig_caption: true
+    theme: simplex
+    highlight: tango
 ---
 
 
 
-# Intro
+# Intro {.tabset}
 
 Hier sollen aktuelle Informationen zur Ausbruchsentwicklung der Covid-19 Pandemie in Deutschland für den internen Austausch gesammelt werden. 
 
-# Erste Karten
+## News
+
+
+## Regionale Ungleichheiten
 
 Regionale Fallzahlen       |  Regionale Todeszahlen
 :-------------------------:|:-------------------------:
@@ -27,10 +32,7 @@ Regionale Fallzahlen       |  Regionale Todeszahlen
 
 Stand 20. April 2020
 
-
-
-
-# BAM!
+## BAM! 
 
 
 

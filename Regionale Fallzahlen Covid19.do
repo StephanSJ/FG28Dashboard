@@ -1,10 +1,41 @@
-cd "S:\OE\FG28\COVID19\FG28Dashboard"
 
-import excel using "S:\OE\FG28\COVID19\FG28Dashboard\Schlüssel Landkreisstring KKZ.xlsx", clear first  
-save "S:\OE\FG28\COVID19\FG28Dashboard\Schlüssel Landkreisstring KKZ.dta", replace
+*-------------------------------------------------------------------------------*
+* Pfade Homeoffice Niels
+* Datenordner 
+global data "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
+* Shapefiles Ordner
+global shape "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
+* R-Projekt Ordner  
+cd "D:\work\projects_RStudio\FG28Dashboard"
+*-------------------------------------------------------------------------------*
+
+
+import excel using "$data\Schlüssel Landkreisstring KKZ.xlsx", clear first  
+save "$data\Schlüssel Landkreisstring KKZ.dta", replace
+
+import excel using "$data\04-kreise.xlsx", clear first cellrange(A8:I478)  sheet("Kreisfreie Städte u. Landkreise")  
+gen dropcases=strlen(A)
+rename A kkz
+rename SchleswigHolstein typ
+	label var typ "Kreis oder Kreisfreie Stadt"
+rename C kreisname
+rename D nuts3
+rename E area
+rename F pop
+rename G pop_m
+rename H pop_f
+rename I pop_dens
+
+keep if dropcases==5
+destring kkz, replace
+
+
+save "$data\Kreise_pop.dta", replace
+
+
 
 * Alle Infos auf Individualebene
-import delim using "S:\OE\FG28\COVID19\FG28Dashboard\Covid19_Liste_2020-04-22_Faelle_ohne_deskription.csv", clear delim(";") 
+import delim using "$data\Covid19_Liste_2020-04-22_Faelle_ohne_deskription.csv", clear delim(";") 
 
 drop aktenzeichen wasvorhanden was exp*
 
@@ -50,21 +81,32 @@ gen cfr=verst_total/fall_total
 
 order meldelandkreis fall_total verst_total cfr, first
 	
-merge m:1 meldelandkreis using "S:\OE\FG28\COVID19\FG28Dashboard\Schlüssel Landkreisstring KKZ.dta"
+merge m:1 meldelandkreis using "$data\Schlüssel Landkreisstring KKZ.dta"
 
 order meldelandkreis kkz fall_total verst_total cfr, first
 	
+drop _merge	
+
+
+
+
+	
+	
+merge m:1 kkz using "$data\Kreise_pop.dta"	
+	
+
 *GISD-Map
 gen KRkennziffer=kkz
-recode KRkennziffer 3159=3152	// Kreisgebietsreform Göttingen
 
-replace KRkennziffer=11000 if bula==3	// Berlin 
+recode KRkennziffer 3159=3152	// Kreisgebietsreform Göttingen
+replace KRkennziffer=11000 if bula==3	// Zusammenfassen der Berliner Bezirke
+	
+* Todo: Shapefiles für eine Karte der Kreise inklusive Berliner Bezirke finden
 
 
 drop _merge
 
 merge m:1 KRkennziffer using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS.dta"
-* Probleme: Berliner Bezirke zusammenfassen, oder in Karte integrieren
 
 
 		  	
