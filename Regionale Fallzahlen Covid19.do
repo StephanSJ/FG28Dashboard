@@ -1,18 +1,42 @@
+*-------------------------------------------------------------------------------*
+* Pfade RKI Office Niels
+* Datenordner 
+global data "S:\OE\FG28\COVID19\Covid_19 Cube"
+* Shapefiles Ordner
+global shape "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten"
+* R-Projekt Ordner  
+cd "S:\OE\FG28\COVID19\FG28Dashboard"
+*-------------------------------------------------------------------------------*
+
 
 *-------------------------------------------------------------------------------*
 * Pfade Homeoffice Niels
 * Datenordner 
-global data "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
+* global data "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
 * Shapefiles Ordner
-global shape "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
+* global shape "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
 * R-Projekt Ordner  
-cd "D:\work\projects_RStudio\FG28Dashboard"
+* cd "D:\work\projects_RStudio\FG28Dashboard"
 *-------------------------------------------------------------------------------*
 
 
-import excel using "$data\Schlüssel Landkreisstring KKZ.xlsx", clear first  
-save "$data\Schlüssel Landkreisstring KKZ.dta", replace
+*********************************************************************************
+* I. Datenaufbereitung
+*********************************************************************************
 
+*-------------------------------------------------------------------------------*
+* 1. Datei um den Landkreisstrings aus Meldedaten die KKZ anzuspielen
+*-------------------------------------------------------------------------------*
+import excel using "$data\Schlüssel Landkreisstring KKZ.xlsx", clear first  
+save "$data\Outfiles\Schlüssel Landkreisstring KKZ.dta", replace
+
+*-------------------------------------------------------------------------------*
+* 2. Datei um Bevölkerungszahlen auf Kreisebene anzuspielen
+*-------------------------------------------------------------------------------*
+
+* Quelle: Destatis
+* Gebietsstand: 31.12.2018
+* Erscheinungsmonat: Oktober 2019
 import excel using "$data\04-kreise.xlsx", clear first cellrange(A8:I478)  sheet("Kreisfreie Städte u. Landkreise")  
 gen dropcases=strlen(A)
 rename A kkz
@@ -26,19 +50,19 @@ rename G pop_m
 rename H pop_f
 rename I pop_dens
 
-keep if dropcases==5
+keep if dropcases==5 // nur Information über Kreise behalten
 destring kkz, replace
 
+save "$data\Outfiles\Kreise_pop.dta", replace
 
-save "$data\Kreise_pop.dta", replace
+*-------------------------------------------------------------------------------*
+* 3. Meldedaten aufbereiten
+*-------------------------------------------------------------------------------*
 
-
-
-* Alle Infos auf Individualebene
+* aktuelle Fallliste inklusive sämtlicher Infos außer Freitextangaben
 import delim using "$data\Covid19_Liste_2020-04-22_Faelle_ohne_deskription.csv", clear delim(";") 
 
 drop aktenzeichen wasvorhanden was exp*
-
 gen alter=alterberechnet
 	replace alter=. if alter>114
 	mvdecode alter, mv(-1=.)
@@ -68,9 +92,11 @@ gen verst_=1 if verstorben==1
 recode meldewoche 28=15
 
 encode meldelandkreisbundesland, gen(bula)
-	
+
+* Um den GISD anzuspielen wird Berlin desaggregiert	
 replace meldelandkreis="Berlin" if bula==3	
-	
+
+* Fallzahlen aggegieren und crude CFR berechnen
 collapse (mean) cfr=verstorben  (count) verst_ (count) fall (mean) bula , by(meldelandkreis meldewoche)
 	lab val bula bula
 	reshape wide verst_ fall cfr , i(meldelandkreis bula) j(meldewoche) 	
@@ -78,41 +104,65 @@ collapse (mean) cfr=verstorben  (count) verst_ (count) fall (mean) bula , by(mel
 egen fall_total=rowtotal(fall*)
 egen verst_total=rowtotal(verst_*)
 gen cfr=verst_total/fall_total
+	replace cfr=0 if verst_total==0
 
 order meldelandkreis fall_total verst_total cfr, first
 	
-merge m:1 meldelandkreis using "$data\Schlüssel Landkreisstring KKZ.dta"
-
+*-------------------------------------------------------------------------------*
+* 4. KKZ anspielen
+*-------------------------------------------------------------------------------*	
+	
+* KKZ Schlüssel anspielen
+merge m:1 meldelandkreis using "$data\Outfiles\Schlüssel Landkreisstring KKZ.dta"
 order meldelandkreis kkz fall_total verst_total cfr, first
-	
 drop _merge	
+replace kkz=11000 if meldelandkreis=="Berlin"
+
+*-------------------------------------------------------------------------------*
+* 4. Bevölkerungszahlen anspielen
+*-------------------------------------------------------------------------------*	
+merge m:1 kkz using "$data\Outfiles\Kreise_pop.dta"	
+drop _merge 	
 
 
+gen fall_p100k=fall_total/pop*100000
+gen verst_p100k=verst_total/pop*100000
 
-
+save "$data\Outfiles\FG28_meldedaten_arbeitsdatensatz.dta", replace	
 	
-	
-merge m:1 kkz using "$data\Kreise_pop.dta"	
-	
+*********************************************************************************
+* II. Erstellung von Karten 
+*********************************************************************************
+
+use "$data\Outfiles\FG28_meldedaten_arbeitsdatensatz.dta", clear
 
 *GISD-Map
 gen KRkennziffer=kkz
 
-recode KRkennziffer 3159=3152	// Kreisgebietsreform Göttingen
+* Kreisgebietsreform Göttingen: Zusammenlegung von LK Göttingen und LK Osterode am Harz
+recode KRkennziffer 3159=3152	// KKZ Göttingens mit alter KKZ überschreiben
+* Die bislang verwendeten Kartendaten trennen beide Landkreise noch. 
+* Damit die Information des zusammengefassten Landkreises Göttingen auf der Karte auch für Osterode angezeigt werden, muss ein weiterer Fall kreiert werden. 
+* Osterode im Harz
+list if KRkennziffer==3152 // Zeile von Göttingen identifizieren
+expand 2 in 26 // Zeile von Göttingen duplizieren
+recode KRkennziffer 3152=3156 in 26 // Kreiskennziffer in einem der Zeilen durch KKZ Osterodes ersetzen
+
+* Zusammenfassen der Berliner Bezirke zu Berlin 
 replace KRkennziffer=11000 if bula==3	// Zusammenfassen der Berliner Bezirke
 	
 * Todo: Shapefiles für eine Karte der Kreise inklusive Berliner Bezirke finden
 
 
-drop _merge
-
 merge m:1 KRkennziffer using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS.dta"
-
-
+drop _merge
+sort KRkennziffer
+drop if KRkennziffer[_n]==KRkennziffer[_n-1]
 		  	
 * Karte Fallzahlen	
 spmap fall_total using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) clm(custom)   clbreaks(0 200 400 800 1600 10000) ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) ///
+  clm(custom) clbreaks(0 200 400 800 1600 10000) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
   polygon(  osize(thin) data("S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta") legshow(2 3 4 5))  ///
@@ -120,12 +170,24 @@ spmap fall_total using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kart
   legend(size(small)  keygap(minuscule) symysize(medium) ///
           symxsize(small) ring(1) row(1) pos(6) rowgap(tiny) colgap(small)) legjunction(" {&ge} ") 		
 gr export "Fallzahlen_Regional.png" , width(450) replace	 		
-	
 
+
+* Karte Fallzahlen pro 100k EW	
+spmap fall_p100k using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) clm(custom)   clbreaks(0 100 200 400 800 1600) ///
+  ndlabel(keine Daten)	  ///
+  subtitle("") legorder(lohi)   ///
+  polygon(  osize(thin) data("S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta") legshow(2 3 4 5))  ///
+  osize(thin .. )  legstyle(2)   graphregion(margin(zero) style(none))  ///
+  legend(size(small)  keygap(minuscule) symysize(medium) ///
+          symxsize(small) ring(1) row(1) pos(6) rowgap(tiny) colgap(small)) legjunction(" {&ge} ") 		
+gr export "Fallzahlen_p100k_Regional.png" , width(450) replace	 		
+	
+	
 
 * Karte Verstorbene 
 spmap verst_total using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) clm(custom) clbreaks(0 5 20 50 160) ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) clm(custom) clbreaks(0 5 20 40 80 160) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
   polygon(  osize(thin) data("S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta") legshow(2 3 4 5))  ///
@@ -134,6 +196,17 @@ spmap verst_total using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kar
           symxsize(small) ring(1) row(1) pos(6) rowgap(tiny) colgap(small)) legjunction(" {&ge} ") 	
 gr export "Todeszahlen_Regional.png" , width(450) replace	 		  
 
+* Karte Verstorbene 
+spmap verst_p100k using "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) clm(custom) clbreaks(0 5 20 50 100 200) ///
+  ndlabel(keine Daten)	  ///
+  subtitle("") legorder(lohi)   ///
+  polygon(  osize(thin) data("S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta") legshow(2 3 4 5))  ///
+  osize(thin .. )  legstyle(2)   graphregion(margin(zero) style(none))  ///
+  legend(size(small)  keygap(minuscule) symysize(medium) ///
+          symxsize(small) ring(1) row(1) pos(6) rowgap(tiny) colgap(small)) legjunction(" {&ge} ") 	
+gr export "Todeszahlen_p100k_Regional.png" , width(450) replace	 		  
+	
+* Option clm(kmeans) erzeugt natural breaks
 	
 	
-

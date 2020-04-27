@@ -19,22 +19,51 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Intro {.tabset}
+# Intro 
 
 Hier sollen aktuelle Informationen zur Ausbruchsentwicklung der Covid-19 Pandemie in Deutschland für den internen Austausch gesammelt werden. 
 
 ## News
 
 
-## Regionale Ungleichheiten
+## Regionale Ungleichheiten {.tabset}
+
+### Regionale Fallzahlen 
 
 Regionale Fallzahlen       |  Regionale Todeszahlen
 :-------------------------:|:-------------------------:
 ![](Fallzahlen_Regional.png)  |  ![](Todeszahlen_Regional.png)
 
+Die regionalen Fallzahlen sind weitherhin stark durch das Ausbruchsgeschehen getrieben. Die höchsten Fallzahlen finden wir in den Landkreisen und kreisfreien Städten in denen es bereits sehr früh zu vielen Ansteckungen gekommen ist (Landkreise Heinzberg, Hohenlohe und Tirschenreuth). In der Mehrheit der Kreise sind die Fallzahlen pro Einwohner gering. 
+
 Stand 20. April 2020
 
-## BAM! 
+### Regionale Fallzahlen (pro 100k Einwohner)
+
+Regionale Fallzahlen pro 100k Einwohner       |  Regionale Todeszahlen pro 100k Einwohner
+:-------------------------:|:-------------------------:
+![](Fallzahlen_p100k_Regional.png)  |  ![](Todeszahlen_p100k_Regional.png)
+
+Stand 20. April 2020
+
+## About this page
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BAM!
 
 
 
