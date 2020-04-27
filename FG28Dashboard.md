@@ -46,24 +46,6 @@ Stand 20. April 2020
 
 ## About this page
 
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> 1f237e6b27730fd00767cfd8e2db8a8fcb2a5ae5
 BAM!
 
 
