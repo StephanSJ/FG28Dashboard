@@ -1,7 +1,7 @@
 ---
-title: "FG28 Dashboard - Sozioökonomisches Covid19 Monitoring"
+title: "Monitoring sozialer Determinanten der Covid19 Epidemie"
 author: "Niels Michalski"
-date: "24 4 2020"
+date: "29. April 2020"
 output: 
   bookdown::html_document2:
     keep_md: true
@@ -19,16 +19,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Intro 
+# Info
 
 Hier sollen aktuelle Informationen zur Ausbruchsentwicklung der Covid-19 Pandemie in Deutschland für den internen Austausch gesammelt werden. 
 
-## News
+# Regionale Ungleichheiten {.tabset}
 
-
-## Regionale Ungleichheiten {.tabset}
-
-### Regionale Fallzahlen 
+## Regionale Fallzahlen 
 
 Regionale Fallzahlen       |  Regionale Todeszahlen
 :-------------------------:|:-------------------------:
@@ -38,7 +35,7 @@ Die regionalen Fallzahlen sind weitherhin stark durch das Ausbruchsgeschehen get
 
 Stand 20. April 2020
 
-### Regionale Fallzahlen (pro 100k Einwohner)
+## Regionale Fallzahlen (pro 100k Einwohner)
 
 Regionale Fallzahlen pro 100k Einwohner       |  Regionale Todeszahlen pro 100k Einwohner
 :-------------------------:|:-------------------------:
@@ -46,7 +43,27 @@ Regionale Fallzahlen pro 100k Einwohner       |  Regionale Todeszahlen pro 100k 
 
 Stand 20. April 2020
 
-## About this page
+# Informationen über das regionale Ausbruchsgeschehen {.tabset}
+
+Hier sollten Informationen zum Verlauf des regionalen Ausbruchsgeschehens gesammelt werden
+
+## Baden Württemberg 
+
+### Bad Rappenau
+
+17.April 2020 
+[Ende der Quarantäne im Alpenland Altenheim](https://www.rnz.de/nachrichten/sinsheim_artikel,-bad-rappenau-quarantaene-im-alpenland-altenheim-nach-sechs-wochen-aufgehoben-update-_arid,502459.html)
+
+## Schleswig-Holstein
+
+### Nordfriesland
+
+27. April 2020
+[Grillparty in Nordfriesland](https://www.spiegel.de/panorama/nordfriesland-neue-corona-faelle-nach-illegaler-grillparty-a-e40f8468-ec97-40f3-9d8a-2d954abe320e)
+
+
+
+# About this page
 
 BAM!
 
