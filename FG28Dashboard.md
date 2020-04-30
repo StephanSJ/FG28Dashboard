@@ -61,6 +61,13 @@ Hier sollten Informationen zum Verlauf des regionalen Ausbruchsgeschehens gesamm
 
 
 
+# Linksammlungen {.tabset}
+
+## Regionales Monitoring des Ausbruchsgeschehens
+
+[Covid-19 Small Area Monitor von der Uni Bielefeld und Uni Heidelberg] (http://covidmonitor.de/)
+
+
 # About this page
 
 BAM!
