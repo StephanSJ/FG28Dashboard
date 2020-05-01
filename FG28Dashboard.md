@@ -31,7 +31,7 @@ Regionale Fallzahlen       |  Regionale Todeszahlen
 
 Die regionalen Fallzahlen sind weitherhin stark durch das Ausbruchsgeschehen getrieben. Die höchsten Fallzahlen finden wir in den Landkreisen und kreisfreien Städten in denen es bereits sehr früh zu vielen Ansteckungen gekommen ist (Landkreise Heinzberg, Hohenlohe und Tirschenreuth). In der Mehrheit der Kreise sind die Fallzahlen pro Einwohner gering. 
 
-Stand 20. April 2020
+Stand 30. April 2020
 
 ## Regionale Fallzahlen (pro 100k Einwohner)
 
@@ -39,7 +39,16 @@ Regionale Fallzahlen pro 100k Einwohner       |  Regionale Todeszahlen pro 100k 
 :-------------------------:|:-------------------------:
 ![](Fallzahlen_p100k_Regional.png)  |  ![](Todeszahlen_p100k_Regional.png)
 
-Stand 20. April 2020
+Stand 30. April 2020
+
+
+## Krude Fallsterblichkeit (CFR)
+
+Regionale Fallsterblichkeit 
+
+![](Krude_CFR_Regional.png)   
+
+Stand 30. April 2020
 
 # Informationen über das regionale Ausbruchsgeschehen {.tabset}
 
@@ -65,7 +74,16 @@ Hier sollten Informationen zum Verlauf des regionalen Ausbruchsgeschehens gesamm
 
 ## Regionales Monitoring des Ausbruchsgeschehens
 
-[Covid-19 Small Area Monitor von der Uni Bielefeld und Uni Heidelberg] (http://covidmonitor.de/)
+Covid-19 Small Area Monitor von der Uni Bielefeld und Uni Heidelberg:  
+[Covidmonitor](http://covidmonitor.de/)
+
+## R und R Markdown Tutorials
+
+Workflow Guide für die Arbeit mit RStudio, RMarkdown und GitHub:  
+[Happy Git with R](https://happygitwithr.com/index.html)
+
+Markdown Guide:  
+[R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/)
 
 
 # About this page
