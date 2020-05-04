@@ -3,7 +3,7 @@
 * Datenordner 
 global data "S:\OE\FG28\COVID19\Covid_19 Cube"
 * Shapefiles Ordner
-global shape "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten"
+global shape "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten"
 * R-Projekt Ordner  
 cd "S:\OE\FG28\COVID19\FG28Dashboard"
 *-------------------------------------------------------------------------------*
@@ -56,6 +56,15 @@ destring kkz, replace
 save "Kreise_pop.dta", replace
 
 *-------------------------------------------------------------------------------*
+* 2. GISD-Daten vorbereiten
+*-------------------------------------------------------------------------------*
+
+import delimited "C:\GISD\Revisions\2018\Bund\Kreis\Kreis_2014.csv", clear
+rename kreiskennziffer kkz
+save "GISD_Kreis_2014.dta", replace
+
+
+*-------------------------------------------------------------------------------*
 * 3. Meldedaten aufbereiten
 *-------------------------------------------------------------------------------*
 
@@ -105,6 +114,20 @@ gen fall_p100k=fall_total/pop*100000
 gen verst_p100k=verst_total/pop*100000
 
 save "FG28_meldedaten_arbeitsdatensatz.dta", replace	
+	
+*-------------------------------------------------------------------------------*
+* 3. GISD 2014 anspielen
+*-------------------------------------------------------------------------------*	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
 	
 *********************************************************************************
 * II. Erstellung von Karten 
