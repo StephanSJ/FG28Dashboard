@@ -1,22 +1,22 @@
 *-------------------------------------------------------------------------------*
 * Pfade RKI Office Niels
 * Datenordner 
-* global data "S:\OE\FG28\COVID19\Covid_19 Cube"
+global data "S:\OE\FG28\COVID19\Covid_19 Cube"
 * Shapefiles Ordner
-* global shape "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten"
+global shape "S:\OE\FG28\205 Regionale Unterschiede\Referenzdaten\Kartendaten"
 * R-Projekt Ordner  
-* cd "S:\OE\FG28\COVID19\FG28Dashboard"
+cd "S:\OE\FG28\COVID19\FG28Dashboard"
 *-------------------------------------------------------------------------------*
 
 
 *-------------------------------------------------------------------------------*
 * Pfade Homeoffice Niels
 * Datenordner 
-global data "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
+* global data "D:\Data\Covid19 Meldezahlen\Covid_19 Cube"
 * Shapefiles Ordner
-global shape "D:\Data\Shapefiles\Referenzdaten\"
+* global shape "D:\Data\Shapefiles\Referenzdaten\"
 * R-Projekt Ordner  
-cd "D:\work\projects_RStudio\FG28Dashboard"
+* cd "D:\work\projects_RStudio\FG28Dashboard"
 *-------------------------------------------------------------------------------*
 
 
@@ -137,7 +137,7 @@ drop if KRkennziffer[_n]==KRkennziffer[_n-1]
 		  	
 * Karte Fallzahlen	
 spmap fall_total using "$shape\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer ) ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) ///
   clm(custom) clbreaks(0 200 400 800 1600 10000) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
@@ -150,7 +150,8 @@ gr export "Fallzahlen_Regional.png" , width(450) replace
 
 * Karte Fallzahlen pro 100k EW	
 spmap fall_p100k using "$shape\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer )  clm(custom)   clbreaks(0 100 200 400 800 1600) ///
+  id(KRkennziffer )  fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) ///
+  clm(custom)   clbreaks(0 100 200 400 800 1600) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
   polygon(  osize(thin) data("$shape\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta") legshow(2 3 4 5))  ///
@@ -163,7 +164,7 @@ gr export "Fallzahlen_p100k_Regional.png" , width(450) replace
 
 * Karte Verstorbene 
 spmap verst_total using "$shape\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer ) ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) ///
   clm(custom) clbreaks(0 5 20 40 80 160) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
@@ -175,7 +176,7 @@ gr export "Todeszahlen_Regional.png" , width(450) replace
 
 * Karte Verstorbene 
 spmap verst_p100k using "$shape\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer ) ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) ///
   clm(custom) clbreaks(0 5 20 50 100 200) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
@@ -187,7 +188,7 @@ gr export "Todeszahlen_p100k_Regional.png" , width(450) replace
 	
 * Karte CFR
 spmap cfr using "$shape\Kartendaten\BRD\2012\BRD_KRS_Koordinaten.dta" , legenda(on)   ///
-  id(KRkennziffer ) ///
+  id(KRkennziffer ) fcolor(rkicmyk5 rkicmyk4 rkicmyk3 rkicmyk2 rkicmyk1) ///
   clm(custom) clbreaks(0 0.02 0.04 0.06 0.08 0.10 0.12 0.14 0.2) ///
   ndlabel(keine Daten)	  ///
   subtitle("") legorder(lohi)   ///
